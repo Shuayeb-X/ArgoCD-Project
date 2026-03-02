@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: apps-generator
+  namespace: argocd
+spec:
+  generators:
+  - git:
+      repoURL: https://github.com/Shuayeb-X/ArgoCD-Project.git
+      revision: main
+      directories:
+      - path: Apache
+      - path: Nginx
+      - path: Online-shop-app
+
+  template:
+    metadata:
+      name: '{{path.basename}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/Shuayeb-X/ArgoCD-Project.git
+        targetRevision: main
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: default
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
